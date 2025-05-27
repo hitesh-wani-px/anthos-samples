@@ -82,18 +82,54 @@ resource "google_container_aws_cluster" "this" {
   }
 }
 
-resource "google_container_aws_node_pool" "this" {
-  name      = "${var.anthos_prefix}-nodepool"
+resource "google_container_aws_node_pool_1" "this" {
+  name      = "${var.anthos_prefix}-nodepool-1"
   cluster   = google_container_aws_cluster.this.id
-  subnet_id = var.node_pool_subnet_id
+  subnet_id = var.node_pool_subnet_id_1
   version   = var.cluster_version
   location  = google_container_aws_cluster.this.location
   max_pods_constraint {
     max_pods_per_node = 110
   }
   autoscaling {
-    min_node_count = 2
-    max_node_count = 5
+    min_node_count = 3
+    max_node_count = 6
+  }
+  config {
+    config_encryption {
+      kms_key_arn = var.node_pool_config_encryption_kms_key_arn
+    }
+    instance_type        = var.node_pool_instance_type
+    iam_instance_profile = var.node_pool_iam_instance_profile
+    root_volume {
+      size_gib    = 30
+      volume_type = "GP3"
+      iops        = 3000
+      kms_key_arn = var.node_pool_root_volume_encryption_kms_key_arn
+    }
+    tags = {
+      "Name" : "${var.anthos_prefix}-nodepool"
+    }
+  }
+  timeouts {
+    create = "45m"
+    update = "45m"
+    delete = "45m"
+  }
+}
+
+resource "google_container_aws_node_pool_2" "this" {
+  name      = "${var.anthos_prefix}-nodepool-2"
+  cluster   = google_container_aws_cluster.this.id
+  subnet_id = var.node_pool_subnet_id_2
+  version   = var.cluster_version
+  location  = google_container_aws_cluster.this.location
+  max_pods_constraint {
+    max_pods_per_node = 110
+  }
+  autoscaling {
+    min_node_count = 3
+    max_node_count = 6
   }
   config {
     config_encryption {

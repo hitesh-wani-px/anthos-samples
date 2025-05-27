@@ -42,14 +42,6 @@ module "iam" {
   np_config_kms_arn      = module.kms.node_pool_config_encryption_kms_key_arn
 }
 
-module "vpc" {
-  source                        = "./modules/vpc"
-  vpc_cidr_block                = var.vpc_cidr_block
-  anthos_prefix                 = local.name_prefix
-  subnet_availability_zones     = var.subnet_availability_zones
-  public_subnet_cidr_block      = var.public_subnet_cidr_block
-  cp_private_subnet_cidr_blocks = var.cp_private_subnet_cidr_blocks
-}
 
 module "gcp_data" {
   source       = "./modules/gcp_data"
@@ -72,10 +64,11 @@ module "anthos_cluster" {
   control_plane_iam_instance_profile               = module.iam.cp_instance_profile_id
   node_pool_iam_instance_profile                   = module.iam.np_instance_profile_id
   admin_users                                      = var.admin_users
-  vpc_id                                           = module.vpc.aws_vpc_id
+  vpc_id                                           = "vpc-0a9fd425aa847ecc5"
   role_arn                                         = module.iam.api_role_arn
-  subnet_ids                                       = [module.vpc.aws_cp_subnet_id_1, module.vpc.aws_cp_subnet_id_2, module.vpc.aws_cp_subnet_id_3]
-  node_pool_subnet_id                              = module.vpc.aws_cp_subnet_id_1
+  subnet_ids                                       = ["subnet-0758f16bc3ca384e0","subnet-01ea9f55fb8fde8bd","subnet-073d25a50c88418cc"]
+  node_pool_subnet_id_1                            = "subnet-0758f16bc3ca384e0"
+  node_pool_subnet_id_2                            = "subnet-01ea9f55fb8fde8bd"
   fleet_project                                    = "projects/${module.gcp_data.project_number}"
   depends_on                                       = [module.kms, module.iam, module.vpc]
   control_plane_instance_type                      = var.control_plane_instance_type

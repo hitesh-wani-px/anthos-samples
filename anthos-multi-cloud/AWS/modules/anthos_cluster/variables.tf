@@ -101,9 +101,14 @@ variable "role_arn" {
   description = "role arn"
 }
 
-variable "node_pool_subnet_id" {
+variable "node_pool_subnet_id_1" {
   type        = string
-  description = "node pool subnet id"
+  description = "node pool subnet id 1"
+}
+
+variable "node_pool_subnet_id_2" {
+  type        = string
+  description = "node pool subnet id 2"
 }
 
 variable "fleet_project" {
